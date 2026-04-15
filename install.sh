@@ -262,7 +262,7 @@ install_p10k() {
         git -C "$p10k_dir" pull --quiet 2>/dev/null || true
         ok "Powerlevel10k atualizado"
     else
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
+        git clone --quiet --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
         ok "Powerlevel10k instalado"
     fi
 }
@@ -278,7 +278,7 @@ install_autosuggestions() {
         ok "zsh-autosuggestions atualizado"
     else
         mkdir -p "$HOME/.zsh/plugins"
-        git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$dir"
+        git clone --quiet --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$dir"
         ok "zsh-autosuggestions instalado"
     fi
 }
