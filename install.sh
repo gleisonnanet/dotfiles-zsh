@@ -111,9 +111,9 @@ install_packages() {
     step "Instalando pacotes do sistema"
     $PKG_UPDATE || true
 
-    # No Ubuntu/Debian Docker, ativar universe para ter eza e outros
+    # No Ubuntu/Debian Docker, ativar universe e instalar dependências base
     if [[ "$PKG_MANAGER" == "apt" ]]; then
-        sudo apt install -y software-properties-common 2>/dev/null || true
+        sudo apt install -y software-properties-common fontconfig 2>/dev/null || true
         sudo add-apt-repository -y universe 2>/dev/null || true
         sudo apt update 2>/dev/null || true
     fi
@@ -277,8 +277,12 @@ install_fonts() {
     fi
 
     info "Atualizando cache de fontes..."
-    fc-cache -f "$FONTS_DIR" 2>/dev/null
-    ok "Cache de fontes atualizado"
+    if command -v fc-cache &>/dev/null; then
+        fc-cache -f "$FONTS_DIR" 2>/dev/null
+        ok "Cache de fontes atualizado"
+    else
+        warn "fc-cache não encontrado (instale fontconfig se necessário)"
+    fi
 }
 
 # ============================================================
