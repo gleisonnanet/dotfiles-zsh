@@ -415,7 +415,6 @@
         xml)           icons+=($'\uE796') ;;
         txt)           icons+=($'\uF15C') ;;
         vue)           icons+=($'\uE6A0') ;;
-        svg)           icons+=($'\uF1C5') ;;
         lua)           icons+=($'\uE620') ;;
         dart)          icons+=($'\uE798') ;;
         r)             icons+=($'\uF25D') ;;
@@ -426,32 +425,33 @@
         ppt|pptx)                   icons+=($'\uF1C4') ;;
         odt|ods|odp)                icons+=($'\uF1C2') ;;
         csv)                        icons+=($'\uF1C0') ;;
-        # Images (each format distinct)
-        png)                        icons+=($'\U000F06D8') ;;
-        jpg|jpeg)                   icons+=($'\U000F02E9') ;;
-        gif)                        icons+=($'\U000F0A73') ;;
-        bmp)                        icons+=($'\uF1C5') ;;
-        webp)                       icons+=($'\U000F1378') ;;
-        ico)                        icons+=($'\U000F02E0') ;;
-        psd)                        icons+=($'\uE7B8') ;;
-        ai)                         icons+=($'\uE7B4') ;;
-        sketch)                     icons+=($'\uE7B2') ;;
-        # Audio (each format distinct)
-        mp3)                        icons+=($'\uF001') ;;
-        wav)                        icons+=($'\U000F058C') ;;
-        flac)                       icons+=($'\U000F0384') ;;
-        ogg)                        icons+=($'\U000F0388') ;;
-        aac)                        icons+=($'\U000F0386') ;;
-        wma)                        icons+=($'\U000F075A') ;;
-        m4a)                        icons+=($'\U000F0385') ;;
-        # Video (each format distinct)
-        mp4)                        icons+=($'\uF008') ;;
-        mkv)                        icons+=($'\U000F0FCE') ;;
-        avi)                        icons+=($'\uF03D') ;;
-        mov)                        icons+=($'\U000F0567') ;;
-        wmv)                        icons+=($'\U000F0568') ;;
-        flv)                        icons+=($'\U000F022B') ;;
-        webm)                       icons+=($'\U000F057E') ;;
+        # Images - same icon , different colors per format
+        png)                        icons+=("%F{33}"$'\uF03E'"%f") ;;
+        jpg|jpeg)                   icons+=("%F{208}"$'\uF03E'"%f") ;;
+        gif)                        icons+=("%F{135}"$'\uF03E'"%f") ;;
+        bmp)                        icons+=("%F{244}"$'\uF03E'"%f") ;;
+        webp)                       icons+=("%F{76}"$'\uF03E'"%f") ;;
+        ico)                        icons+=("%F{220}"$'\uF03E'"%f") ;;
+        svg)                        icons+=("%F{214}"$'\uF03E'"%f") ;;
+        psd)                        icons+=("%F{38}"$'\uE7B8'"%f") ;;
+        ai)                         icons+=("%F{208}"$'\uE7B4'"%f") ;;
+        sketch)                     icons+=("%F{220}"$'\uE7B2'"%f") ;;
+        # Audio - same icon , different colors per format
+        mp3)                        icons+=("%F{196}"$'\uF001'"%f") ;;
+        wav)                        icons+=("%F{33}"$'\uF001'"%f") ;;
+        flac)                       icons+=("%F{76}"$'\uF001'"%f") ;;
+        ogg)                        icons+=("%F{208}"$'\uF001'"%f") ;;
+        aac)                        icons+=("%F{220}"$'\uF001'"%f") ;;
+        wma)                        icons+=("%F{135}"$'\uF001'"%f") ;;
+        m4a)                        icons+=("%F{44}"$'\uF001'"%f") ;;
+        # Video - same icon , different colors per format
+        mp4)                        icons+=("%F{196}"$'\uF008'"%f") ;;
+        mkv)                        icons+=("%F{33}"$'\uF008'"%f") ;;
+        avi)                        icons+=("%F{208}"$'\uF008'"%f") ;;
+        mov)                        icons+=("%F{220}"$'\uF008'"%f") ;;
+        wmv)                        icons+=("%F{135}"$'\uF008'"%f") ;;
+        flv)                        icons+=("%F{76}"$'\uF008'"%f") ;;
+        webm)                       icons+=("%F{44}"$'\uF008'"%f") ;;
         # Archives
         zip|tar|gz|bz2|xz|7z|rar|zst) icons+=($'\uF1C6') ;;
         # Disk images / ISO
