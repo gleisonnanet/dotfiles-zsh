@@ -163,14 +163,9 @@ Se o KDE for detectado, o instalador também configura:
 
 ## Testar com Docker
 
-Teste a instalação em um container descartável sem afetar seu sistema. O container fica rodando para você entrar e explorar o ZSH à vontade.
+Teste a instalação em um container descartável sem afetar seu sistema. Escolha sua distro, rode o comando e depois entre no container para explorar o ZSH configurado.
 
-### 1. Criar e instalar
-
-Escolha sua distro e execute:
-
-<details>
-<summary><strong>Fedora</strong></summary>
+### Fedora
 
 ```bash
 docker run -d --name zsh-test fedora:43 bash -c \
@@ -181,10 +176,7 @@ docker run -d --name zsh-test fedora:43 bash -c \
    tail -f /dev/null"
 ```
 
-</details>
-
-<details>
-<summary><strong>Ubuntu</strong></summary>
+### Ubuntu
 
 ```bash
 docker run -d --name zsh-test ubuntu:24.04 bash -c \
@@ -195,10 +187,7 @@ docker run -d --name zsh-test ubuntu:24.04 bash -c \
    tail -f /dev/null"
 ```
 
-</details>
-
-<details>
-<summary><strong>Arch Linux</strong></summary>
+### Arch Linux
 
 ```bash
 docker run -d --name zsh-test archlinux:latest bash -c \
@@ -209,10 +198,7 @@ docker run -d --name zsh-test archlinux:latest bash -c \
    tail -f /dev/null"
 ```
 
-</details>
-
-<details>
-<summary><strong>openSUSE</strong></summary>
+### openSUSE
 
 ```bash
 docker run -d --name zsh-test opensuse/tumbleweed bash -c \
@@ -223,21 +209,27 @@ docker run -d --name zsh-test opensuse/tumbleweed bash -c \
    tail -f /dev/null"
 ```
 
-</details>
+> **Importante:** Execute apenas **um** dos comandos acima. Se quiser testar outra distro, remova o container anterior com `docker rm -f zsh-test` antes de criar um novo.
 
-### 2. Acompanhar a instalação
+### Acompanhar a instalação
 
 ```bash
 docker logs -f zsh-test
 ```
 
-### 3. Entrar no container e testar o ZSH
+Aguarde até ver a mensagem de conclusão. Pressione `Ctrl+C` para sair dos logs.
+
+### Entrar no container e testar o ZSH
 
 ```bash
 docker exec -it zsh-test su - tester -s /bin/zsh
 ```
 
-### 4. Limpar quando terminar
+Você verá o prompt de 3 linhas com ícones funcionando. Navegue entre pastas para ver os ícones mudarem conforme o conteúdo do diretório.
+
+Para sair do container: `exit` ou `Ctrl+D`.
+
+### Limpar quando terminar
 
 ```bash
 docker rm -f zsh-test
