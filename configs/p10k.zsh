@@ -426,14 +426,32 @@
         ppt|pptx)                   icons+=($'\uF1C4') ;;
         odt|ods|odp)                icons+=($'\uF1C2') ;;
         csv)                        icons+=($'\uF1C0') ;;
-        # Images
-        png|jpg|jpeg|gif|bmp|webp)  icons+=($'\uF1C5') ;;
-        ico)                        icons+=($'\uF1C5') ;;
-        psd|ai|sketch)              icons+=($'\uE7B8') ;;
-        # Audio
-        mp3|wav|flac|ogg|aac|wma|m4a) icons+=($'\uF001') ;;
-        # Video
-        mp4|mkv|avi|mov|wmv|flv|webm) icons+=($'\uF008') ;;
+        # Images (each format distinct)
+        png)                        icons+=($'\U000F06D8') ;;
+        jpg|jpeg)                   icons+=($'\U000F02E9') ;;
+        gif)                        icons+=($'\U000F0A73') ;;
+        bmp)                        icons+=($'\uF1C5') ;;
+        webp)                       icons+=($'\U000F1378') ;;
+        ico)                        icons+=($'\U000F02E0') ;;
+        psd)                        icons+=($'\uE7B8') ;;
+        ai)                         icons+=($'\uE7B4') ;;
+        sketch)                     icons+=($'\uE7B2') ;;
+        # Audio (each format distinct)
+        mp3)                        icons+=($'\uF001') ;;
+        wav)                        icons+=($'\U000F058C') ;;
+        flac)                       icons+=($'\U000F0384') ;;
+        ogg)                        icons+=($'\U000F0388') ;;
+        aac)                        icons+=($'\U000F0386') ;;
+        wma)                        icons+=($'\U000F075A') ;;
+        m4a)                        icons+=($'\U000F0385') ;;
+        # Video (each format distinct)
+        mp4)                        icons+=($'\uF008') ;;
+        mkv)                        icons+=($'\U000F0FCE') ;;
+        avi)                        icons+=($'\uF03D') ;;
+        mov)                        icons+=($'\U000F0567') ;;
+        wmv)                        icons+=($'\U000F0568') ;;
+        flv)                        icons+=($'\U000F022B') ;;
+        webm)                       icons+=($'\U000F057E') ;;
         # Archives
         zip|tar|gz|bz2|xz|7z|rar|zst) icons+=($'\uF1C6') ;;
         # Disk images / ISO
