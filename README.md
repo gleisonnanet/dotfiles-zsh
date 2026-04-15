@@ -1,28 +1,54 @@
 # ZSH Dotfiles
 
-Configuração completa de terminal ZSH com visual moderno e funcional.
+> Configuração completa e automatizada de terminal ZSH para Linux — visual moderno, informativo e produtivo.
 
-## O que inclui
+![Prompt em pasta com muitos arquivos](img/demo1.png)
 
-- **Oh-My-Zsh** + **Powerlevel10k** (tema rainbow, prompt de 3 linhas)
-- **Nerd Fonts**: JetBrainsMono, MesloLGS, CascadiaCode, Inter
-- **Ferramentas CLI**: eza (ls), bat (cat), fzf (fuzzy finder)
-- **Plugins**: zsh-autosuggestions, zsh-syntax-highlighting
-- **Configuração KDE Plasma** (fontes, antialiasing, Konsole)
+![Prompt na pasta Downloads com ícones de mídia](img/demo2.png)
 
-## Prompt de 3 linhas
+![Prompt em repositório Git](img/demo3.png)
+
+---
+
+## Funcionalidades
+
+- **Prompt de 3 linhas** com informações contextuais em tempo real
+- **Detecção automática de tipos de arquivo** por extensão — exibe ícones coloridos ao entrar em qualquer diretório
+- **Integração Git** — mostra branch atual, status de alterações
+- **Ícones de pasta especiais** — Home, Downloads, Documentos, Imagens, Músicas, Vídeos
+- **Permissões e contadores** — total de arquivos, pastas e permissões do diretório
+- **Aliases produtivos** — `ls`, `cat`, `tree` substituídos por versões modernas
+
+## Stack
+
+| Componente | Descrição |
+|---|---|
+| [Oh-My-Zsh](https://ohmyz.sh/) | Framework de configuração ZSH |
+| [Powerlevel10k](https://github.com/romkatv/powerlevel10k) | Tema de prompt rápido e customizável |
+| [eza](https://eza.rocks/) | Substituto moderno do `ls` com ícones e Git |
+| [bat](https://github.com/sharkdp/bat) | Substituto do `cat` com syntax highlighting |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy finder para histórico e arquivos |
+| [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) | Sugestões baseadas no histórico |
+| [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) | Destaque de sintaxe na linha de comando |
+| [Nerd Fonts](https://www.nerdfonts.com/) | JetBrainsMono, MesloLGS, CascadiaCode, Inter |
+
+## Layout do Prompt
 
 ```
- fedora  ~/projeto/backend  on  main          at 16:09
+ fedora  ~/projeto/backend  on  main              at 16:09
        │  5  6  │  drwxr-xr-x
 ❯
 ```
 
-- **Linha 1**: Ícone do OS + caminho + branch Git + hora
-- **Linha 2**: Ícones por tipo de arquivo │ pastas/arquivos │ permissões
-- **Linha 3**: Prompt de input (`❯`)
+| Linha | Conteúdo |
+|-------|----------|
+| **1** | Ícone do OS + caminho + branch Git + hora |
+| **2** | Ícones por tipo de arquivo │ pastas/arquivos │ permissões |
+| **3** | Prompt de input `❯` |
 
-### Tipos de arquivo detectados
+## Tipos de Arquivo Detectados
+
+### Código
 
 | Ícone | Extensões |
 |-------|-----------|
@@ -44,49 +70,112 @@ Configuração completa de terminal ZSH com visual moderno e funcional.
 |  | `.php` |
 |  | `.vue` |
 |  | `.dart` |
-|  | `Dockerfile` |
-|  | `Makefile` |
+|  | `.lua` |
+|  | `.r` |
+|  | `.sql` |
+|  | `.xml` |
+|  | `.toml` `.ini` `.cfg` |
+|  | `.txt` |
+
+### Mídia (mesmo ícone por categoria, cor diferente por formato)
+
+| Categoria | Formatos (cada um com cor distinta) |
+|-----------|-------------------------------------|
+|  Imagem | `png` `jpg` `gif` `bmp` `webp` `ico` `svg` |
+|  Áudio | `mp3` `wav` `flac` `ogg` `aac` `wma` `m4a` |
+|  Vídeo | `mp4` `mkv` `avi` `mov` `wmv` `flv` `webm` |
+
+### Documentos e outros
+
+| Ícone | Tipo |
+|-------|------|
+|  | PDF |
+|  | DOC / DOCX / ODT |
+|  | XLS / XLSX / ODS |
+|  | PPT / PPTX / ODP |
+|  | CSV |
+|  | PSD |
+|  | AI |
+|  | Sketch |
+|  | Arquivos compactados (zip, tar, gz, 7z, rar...) |
+|  | ISO / IMG |
+|  | Fontes (ttf, otf, woff) |
+|  | Binários (bin, exe, AppImage, deb, rpm) |
+|  | Dockerfile / docker-compose |
+|  | Makefile |
 
 ## Instalação
 
 ```bash
-git clone https://github.com/SEU_USUARIO/dotfiles-zsh.git
+git clone https://github.com/gleisonnanet/dotfiles-zsh.git
 cd dotfiles-zsh
 chmod +x install.sh
 ./install.sh
 ```
 
-## Aliases incluídos
+O instalador detecta automaticamente sua distro e instala tudo o que é necessário.
 
-| Alias | Comando |
-|-------|---------|
-| `ls`  | `eza --icons` |
-| `ll`  | `eza -lah --icons --git --time-style=long-iso` |
-| `lt`  | `eza --tree --level=2 --icons` |
-| `cat` | `bat --paging=never --style=plain` |
-| `..`  | `cd ..` |
-| `reload` | `source ~/.zshrc` |
-| `ports`  | `ss -tulnp` |
-| `myip`   | `curl -s ifconfig.me` |
+## Aliases Incluídos
 
-## Distros suportadas
+| Alias | Comando | Descrição |
+|-------|---------|-----------|
+| `ls` | `eza --icons` | Listagem com ícones |
+| `ll` | `eza -lah --icons --git` | Listagem detalhada com Git |
+| `lt` | `eza --tree --level=2 --icons` | Árvore de diretórios |
+| `cat` | `bat --style=plain` | Cat com syntax highlighting |
+| `..` | `cd ..` | Subir um diretório |
+| `...` | `cd ../..` | Subir dois diretórios |
+| `reload` | `source ~/.zshrc` | Recarregar configuração |
+| `ports` | `ss -tulnp` | Listar portas abertas |
+| `myip` | `curl -s ifconfig.me` | IP público |
 
-- Fedora / RHEL / CentOS / Rocky
-- Ubuntu / Debian / Linux Mint / Pop!_OS
-- Arch / Manjaro / EndeavourOS
-- openSUSE
+## Distros Suportadas
 
-## Backup e restauração
+| Distro | Gerenciador |
+|--------|-------------|
+| Fedora / RHEL / CentOS / Rocky | `dnf` |
+| Ubuntu / Debian / Mint / Pop!_OS | `apt` |
+| Arch / Manjaro / EndeavourOS | `pacman` |
+| openSUSE | `zypper` |
 
-O instalador cria um backup automático em `~/.dotfiles-backup/`.
+## Backup e Restauração
 
-Para restaurar:
+O instalador cria backup automático em `~/.dotfiles-backup/` antes de sobrescrever qualquer arquivo.
+
 ```bash
+# Restaurar configurações anteriores
 ./uninstall.sh
 ```
 
 ## Requisitos
 
 - `git`, `curl`, `unzip`
-- Acesso sudo (para instalar pacotes)
-- Terminal com suporte a Unicode e cores (Konsole, Alacritty, Kitty, WezTerm)
+- Acesso `sudo` (para instalar pacotes)
+- Terminal com suporte a Unicode e cores (Konsole, Alacritty, Kitty, WezTerm, GNOME Terminal)
+
+## Configuração KDE Plasma (Automática)
+
+Se o KDE for detectado, o instalador também configura:
+- Antialiasing e hinting de fontes
+- Fonte do sistema: Inter 10pt
+- Fonte fixa: JetBrainsMono Nerd Font 10pt
+- Perfil Konsole com ZSH e fonte Nerd Font
+
+---
+
+## Aviso Legal
+
+Este projeto é distribuído sob a licença **MIT** e é fornecido **"como está" (as-is)**, sem garantias de qualquer tipo, expressas ou implícitas.
+
+**Ao utilizar este software, você concorda que:**
+
+- O uso é por **sua conta e risco**. Os autores não se responsabilizam por quaisquer danos, perda de dados, ou problemas decorrentes da instalação ou uso deste projeto.
+- O script realiza alterações em arquivos de configuração do sistema (`~/.zshrc`, `~/.p10k.zsh`, configurações do KDE). Embora o instalador crie backups automáticos, é sua responsabilidade verificar que o backup foi realizado corretamente.
+- Este projeto não possui qualquer afiliação com as ferramentas de terceiros que instala (Oh-My-Zsh, Powerlevel10k, eza, bat, fzf, Nerd Fonts, etc). Cada uma possui sua própria licença.
+- Você é responsável por revisar o código antes de executá-lo em ambientes de produção.
+
+---
+
+## Licença
+
+[MIT](LICENSE) — use, modifique e distribua livremente.
