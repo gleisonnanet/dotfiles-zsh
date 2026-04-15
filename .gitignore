@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backup dir (don't track local backups)
+.dotfiles-backup/
+
+# Font files (downloaded at install time)
+fonts/*.ttf
+fonts/*.otf
+fonts/*.tar.xz
+fonts/*.zip
