@@ -161,6 +161,52 @@ Se o KDE for detectado, o instalador também configura:
 - Fonte fixa: JetBrainsMono Nerd Font 10pt
 - Perfil Konsole com ZSH e fonte Nerd Font
 
+## Testar com Docker
+
+Você pode testar a instalação em um container descartável sem afetar seu sistema:
+
+### Fedora
+
+```bash
+docker run -it --rm fedora:43 bash -c \
+  "dnf install -y git curl unzip sudo && \
+   useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+```
+
+### Ubuntu
+
+```bash
+docker run -it --rm ubuntu:24.04 bash -c \
+  "apt update && apt install -y git curl unzip sudo && \
+   useradd -m -s /bin/bash tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+```
+
+### Arch Linux
+
+```bash
+docker run -it --rm archlinux:latest bash -c \
+  "pacman -Sy --noconfirm git curl unzip sudo && \
+   useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+```
+
+### openSUSE
+
+```bash
+docker run -it --rm opensuse/tumbleweed bash -c \
+  "zypper install -y git curl unzip sudo && \
+   useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+   su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+```
+
+> **Nota:** Após a instalação, execute `zsh` dentro do container para ver o prompt configurado.
+
 ---
 
 ## Aviso Legal
