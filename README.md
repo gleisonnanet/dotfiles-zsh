@@ -137,6 +137,7 @@ O instalador detecta automaticamente sua distro e instala tudo o que é necessá
 | Ubuntu / Debian / Mint / Pop!_OS | `apt` |
 | Arch / Manjaro / EndeavourOS | `pacman` |
 | openSUSE | `zypper` |
+| FreeBSD | `pkg` |
 
 ## Backup e Restauração
 
@@ -208,6 +209,19 @@ docker run -d --name zsh-test opensuse/tumbleweed bash -c \
    cd dotfiles-zsh && chmod +x install.sh && ./install.sh' && \
    tail -f /dev/null"
 ```
+
+### FreeBSD
+
+```bash
+docker run -d --name zsh-test freebsd:14.2 sh -c \
+  "pkg install -y git curl unzip sudo bash && \
+   pw useradd tester -m -s /bin/sh && echo 'tester ALL=(ALL) NOPASSWD: ALL' >> /usr/local/etc/sudoers && \
+   su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
+   cd dotfiles-zsh && chmod +x install.sh && bash install.sh' && \
+   tail -f /dev/null"
+```
+
+> **Nota:** O Docker para FreeBSD requer um host FreeBSD ou uma VM FreeBSD. Em hosts Linux, use uma VM com `vagrant` ou teste diretamente em um sistema FreeBSD.
 
 > **Importante:** Execute apenas **um** dos comandos acima. Se quiser testar outra distro, remova o container anterior com `docker rm -f zsh-test` antes de criar um novo.
 

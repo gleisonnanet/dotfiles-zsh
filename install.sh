@@ -15,6 +15,11 @@ CONFIGS_DIR="$SCRIPT_DIR/configs"
 FONTS_DIR="$HOME/.local/share/fonts"
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d_%H%M%S)"
 
+# FreeBSD usa caminho diferente para fontes
+if uname -s | grep -qi freebsd; then
+    FONTS_DIR="$HOME/.fonts"
+fi
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -38,6 +43,8 @@ detect_distro() {
         DISTRO="$ID"
     elif command -v lsb_release &>/dev/null; then
         DISTRO="$(lsb_release -si | tr '[:upper:]' '[:lower:]')"
+    elif uname -s | grep -qi freebsd; then
+        DISTRO="freebsd"
     else
         DISTRO="unknown"
     fi
@@ -48,12 +55,12 @@ detect_distro() {
             PKG_INSTALL="sudo dnf install -y"
             PKG_UPDATE="sudo dnf check-update || true"
             ;;
-        ubuntu|debian|linuxmint|pop)
+        ubuntu|debian|linuxmint|pop|elementary|zorin|neon)
             PKG_MANAGER="apt"
             PKG_INSTALL="sudo apt install -y"
             PKG_UPDATE="sudo apt update"
             ;;
-        arch|manjaro|endeavouros)
+        arch|manjaro|endeavouros|garuda|artix)
             PKG_MANAGER="pacman"
             PKG_INSTALL="sudo pacman -S --noconfirm"
             PKG_UPDATE="sudo pacman -Sy"
@@ -63,10 +70,44 @@ detect_distro() {
             PKG_INSTALL="sudo zypper install -y"
             PKG_UPDATE="sudo zypper refresh"
             ;;
+        freebsd)
+            PKG_MANAGER="pkg"
+            PKG_INSTALL="sudo pkg install -y"
+            PKG_UPDATE="sudo pkg update"
+            ;;
         *)
-            error "Distro '$DISTRO' não suportada automaticamente."
-            error "Instale manualmente: zsh eza bat fzf zsh-syntax-highlighting"
-            exit 1
+            # Tentar detectar pelo gerenciador disponível
+            if command -v pkg &>/dev/null && uname -s | grep -qi freebsd; then
+                DISTRO="freebsd"
+                PKG_MANAGER="pkg"
+                PKG_INSTALL="sudo pkg install -y"
+                PKG_UPDATE="sudo pkg update"
+            elif command -v apt &>/dev/null; then
+                DISTRO="debian"
+                PKG_MANAGER="apt"
+                PKG_INSTALL="sudo apt install -y"
+                PKG_UPDATE="sudo apt update"
+            elif command -v dnf &>/dev/null; then
+                DISTRO="fedora"
+                PKG_MANAGER="dnf"
+                PKG_INSTALL="sudo dnf install -y"
+                PKG_UPDATE="sudo dnf check-update || true"
+            elif command -v pacman &>/dev/null; then
+                DISTRO="arch"
+                PKG_MANAGER="pacman"
+                PKG_INSTALL="sudo pacman -S --noconfirm"
+                PKG_UPDATE="sudo pacman -Sy"
+            elif command -v zypper &>/dev/null; then
+                DISTRO="opensuse"
+                PKG_MANAGER="zypper"
+                PKG_INSTALL="sudo zypper install -y"
+                PKG_UPDATE="sudo zypper refresh"
+            else
+                error "Distro '$DISTRO' não suportada automaticamente."
+                error "Instale manualmente: zsh eza bat fzf zsh-syntax-highlighting"
+                exit 1
+            fi
+            warn "Distro '$DISTRO' detectada via gerenciador de pacotes"
             ;;
     esac
 
@@ -111,12 +152,27 @@ install_packages() {
     step "Instalando pacotes do sistema"
     $PKG_UPDATE || true
 
-    # No Ubuntu/Debian Docker, ativar universe e instalar dependências base
-    if [[ "$PKG_MANAGER" == "apt" ]]; then
-        sudo apt install -y software-properties-common fontconfig 2>/dev/null || true
-        sudo add-apt-repository -y universe 2>/dev/null || true
-        sudo apt update 2>/dev/null || true
-    fi
+    # Instalar dependências base por distro
+    case "$PKG_MANAGER" in
+        apt)
+            sudo apt install -y software-properties-common fontconfig 2>/dev/null || true
+            sudo add-apt-repository -y universe 2>/dev/null || true
+            sudo apt update 2>/dev/null || true
+            ;;
+        dnf)
+            install_pkg "fontconfig" fontconfig || true
+            ;;
+        pacman)
+            install_pkg "fontconfig" fontconfig || true
+            ;;
+        zypper)
+            install_pkg "fontconfig" fontconfig || true
+            ;;
+        pkg)
+            # FreeBSD: garantir dependências base
+            install_pkg "fontconfig" fontconfig || true
+            ;;
+    esac
 
     # zsh (crítico - não pode falhar)
     if ! command -v zsh &>/dev/null; then
@@ -167,9 +223,14 @@ install_packages() {
     local zsh_hl_installed=false
     [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && zsh_hl_installed=true
     [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && zsh_hl_installed=true
+    [ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && zsh_hl_installed=true
 
     if ! $zsh_hl_installed; then
-        install_pkg "zsh-syntax-highlighting" zsh-syntax-highlighting || true
+        if [[ "$PKG_MANAGER" == "pkg" ]]; then
+            install_pkg "zsh-syntax-highlighting" zsh-syntax-highlighting || true
+        else
+            install_pkg "zsh-syntax-highlighting" zsh-syntax-highlighting || true
+        fi
     else
         ok "zsh-syntax-highlighting já instalado"
     fi
@@ -318,17 +379,24 @@ fix_syntax_highlighting_path() {
     local zshrc="$HOME/.zshrc"
     local found=false
 
-    # Check common locations
+    # Check common locations (Linux, FreeBSD, macOS)
     local paths=(
         "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
         "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-        "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
         "/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        "/usr/local/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     )
+
+    # sed -i funciona diferente no FreeBSD/macOS (BSD sed)
+    local sed_inplace=(sed -i)
+    if [[ "$(uname -s)" == "FreeBSD" ]] || [[ "$(uname -s)" == "Darwin" ]]; then
+        sed_inplace=(sed -i '')
+    fi
 
     for p in "${paths[@]}"; do
         if [ -f "$p" ]; then
-            sed -i "s|source .*/zsh-syntax-highlighting.zsh|source $p|" "$zshrc"
+            "${sed_inplace[@]}" "s|source .*/zsh-syntax-highlighting.zsh|source $p|" "$zshrc"
             ok "Path zsh-syntax-highlighting ajustado: $p"
             found=true
             break
@@ -337,7 +405,7 @@ fix_syntax_highlighting_path() {
 
     if ! $found; then
         warn "zsh-syntax-highlighting não encontrado - a linha será comentada no .zshrc"
-        sed -i 's|^source .*/zsh-syntax-highlighting.zsh|# &|' "$zshrc"
+        "${sed_inplace[@]}" 's|^source .*/zsh-syntax-highlighting.zsh|# &|' "$zshrc"
     fi
 
     # Fix FZF keybindings path
@@ -345,12 +413,13 @@ fix_syntax_highlighting_path() {
         "/usr/share/fzf/shell/key-bindings.zsh"
         "/usr/share/doc/fzf/examples/key-bindings.zsh"
         "/usr/share/fzf/key-bindings.zsh"
+        "/usr/local/share/examples/fzf/shell/key-bindings.zsh"
         "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"
     )
 
     for p in "${fzf_paths[@]}"; do
         if [ -f "$p" ]; then
-            sed -i "s|/usr/share/fzf/shell/key-bindings.zsh|$p|" "$zshrc"
+            "${sed_inplace[@]}" "s|/usr/share/fzf/shell/key-bindings.zsh|$p|" "$zshrc"
             ok "Path FZF keybindings ajustado: $p"
             break
         fi
@@ -410,18 +479,30 @@ KONSOLE
 # ============================================================
 set_default_shell() {
     step "Configurando shell padrão"
-    local current_shell
-    current_shell=$(getent passwd "$(whoami)" | cut -d: -f7)
+    local current_shell=""
     local zsh_path
     zsh_path=$(command -v zsh)
+
+    # getent pode não existir no FreeBSD
+    if command -v getent &>/dev/null; then
+        current_shell=$(getent passwd "$(whoami)" | cut -d: -f7)
+    elif [ -f /etc/passwd ]; then
+        current_shell=$(grep "^$(whoami):" /etc/passwd | cut -d: -f7)
+    fi
 
     if [[ "$current_shell" == *"zsh"* ]]; then
         ok "ZSH já é o shell padrão"
     else
         info "Alterando shell padrão para ZSH..."
-        chsh -s "$zsh_path" 2>/dev/null || {
-            warn "Falha ao alterar shell. Execute manualmente: chsh -s $zsh_path"
-        }
+        if [[ "$DISTRO" == "freebsd" ]]; then
+            chsh -s "$zsh_path" 2>/dev/null || pw usermod "$(whoami)" -s "$zsh_path" 2>/dev/null || {
+                warn "Falha ao alterar shell. Execute manualmente: chsh -s $zsh_path"
+            }
+        else
+            chsh -s "$zsh_path" 2>/dev/null || {
+                warn "Falha ao alterar shell. Execute manualmente: chsh -s $zsh_path"
+            }
+        fi
         ok "Shell padrão alterado para $zsh_path"
     fi
 }
