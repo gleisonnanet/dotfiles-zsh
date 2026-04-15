@@ -163,49 +163,85 @@ Se o KDE for detectado, o instalador também configura:
 
 ## Testar com Docker
 
-Você pode testar a instalação em um container descartável sem afetar seu sistema:
+Teste a instalação em um container descartável sem afetar seu sistema. O container fica rodando para você entrar e explorar o ZSH à vontade.
 
-### Fedora
+### 1. Criar e instalar
+
+Escolha sua distro e execute:
+
+<details>
+<summary><strong>Fedora</strong></summary>
 
 ```bash
-docker run -it --rm fedora:43 bash -c \
+docker run -d --name zsh-test fedora:43 bash -c \
   "dnf install -y git curl unzip sudo && \
    useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
    su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
-   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh' && \
+   tail -f /dev/null"
 ```
 
-### Ubuntu
+</details>
+
+<details>
+<summary><strong>Ubuntu</strong></summary>
 
 ```bash
-docker run -it --rm ubuntu:24.04 bash -c \
+docker run -d --name zsh-test ubuntu:24.04 bash -c \
   "apt update && apt install -y git curl unzip sudo && \
    useradd -m -s /bin/bash tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
    su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
-   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh' && \
+   tail -f /dev/null"
 ```
 
-### Arch Linux
+</details>
+
+<details>
+<summary><strong>Arch Linux</strong></summary>
 
 ```bash
-docker run -it --rm archlinux:latest bash -c \
+docker run -d --name zsh-test archlinux:latest bash -c \
   "pacman -Sy --noconfirm git curl unzip sudo && \
    useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
    su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
-   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh' && \
+   tail -f /dev/null"
 ```
 
-### openSUSE
+</details>
+
+<details>
+<summary><strong>openSUSE</strong></summary>
 
 ```bash
-docker run -it --rm opensuse/tumbleweed bash -c \
+docker run -d --name zsh-test opensuse/tumbleweed bash -c \
   "zypper install -y git curl unzip sudo && \
    useradd -m tester && echo 'tester ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
    su - tester -c 'git clone https://github.com/gleisonnanet/dotfiles-zsh.git && \
-   cd dotfiles-zsh && chmod +x install.sh && ./install.sh'"
+   cd dotfiles-zsh && chmod +x install.sh && ./install.sh' && \
+   tail -f /dev/null"
 ```
 
-> **Nota:** Após a instalação, execute `zsh` dentro do container para ver o prompt configurado.
+</details>
+
+### 2. Acompanhar a instalação
+
+```bash
+docker logs -f zsh-test
+```
+
+### 3. Entrar no container e testar o ZSH
+
+```bash
+docker exec -it zsh-test su - tester -s /bin/zsh
+```
+
+### 4. Limpar quando terminar
+
+```bash
+docker rm -f zsh-test
+```
 
 ---
 
