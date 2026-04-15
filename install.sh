@@ -96,44 +96,69 @@ backup_existing() {
 # ============================================================
 # Install packages
 # ============================================================
+install_pkg() {
+    local name="$1"
+    shift
+    if $PKG_INSTALL "$@"; then
+        ok "$name instalado"
+    else
+        warn "$name: falha na instalação (continuando...)"
+        return 1
+    fi
+}
+
 install_packages() {
     step "Instalando pacotes do sistema"
-    $PKG_UPDATE
+    $PKG_UPDATE || true
 
-    # zsh
+    # No Ubuntu/Debian Docker, ativar universe para ter eza e outros
+    if [[ "$PKG_MANAGER" == "apt" ]]; then
+        sudo apt install -y software-properties-common 2>/dev/null || true
+        sudo add-apt-repository -y universe 2>/dev/null || true
+        sudo apt update 2>/dev/null || true
+    fi
+
+    # zsh (crítico - não pode falhar)
     if ! command -v zsh &>/dev/null; then
-        $PKG_INSTALL zsh
-        ok "ZSH instalado"
+        install_pkg "ZSH" zsh || { error "ZSH é obrigatório e não foi possível instalar!"; exit 1; }
     else
         ok "ZSH já instalado"
     fi
 
     # eza
     if ! command -v eza &>/dev/null; then
-        $PKG_INSTALL eza
-        ok "eza instalado"
+        if ! install_pkg "eza" eza; then
+            # Fallback: instalar via cargo ou binário
+            if command -v cargo &>/dev/null; then
+                info "Tentando eza via cargo..."
+                cargo install eza 2>/dev/null && ok "eza instalado (cargo)" || warn "eza indisponível"
+            else
+                warn "eza indisponível nos repositórios. Instale manualmente: https://eza.rocks/"
+            fi
+        fi
     else
         ok "eza já instalado"
     fi
 
     # bat
-    if ! command -v bat &>/dev/null; then
+    if ! command -v bat &>/dev/null && ! command -v batcat &>/dev/null; then
         if [[ "$PKG_MANAGER" == "apt" ]]; then
-            $PKG_INSTALL bat
+            install_pkg "bat" bat || true
             # Debian/Ubuntu instala como batcat
-            [ ! -f /usr/bin/bat ] && sudo ln -sf /usr/bin/batcat /usr/bin/bat 2>/dev/null || true
+            if command -v batcat &>/dev/null && ! command -v bat &>/dev/null; then
+                sudo ln -sf "$(command -v batcat)" /usr/local/bin/bat 2>/dev/null || true
+                ok "Link batcat → bat criado"
+            fi
         else
-            $PKG_INSTALL bat
+            install_pkg "bat" bat || true
         fi
-        ok "bat instalado"
     else
         ok "bat já instalado"
     fi
 
     # fzf
     if ! command -v fzf &>/dev/null; then
-        $PKG_INSTALL fzf
-        ok "fzf instalado"
+        install_pkg "fzf" fzf || true
     else
         ok "fzf já instalado"
     fi
@@ -144,8 +169,7 @@ install_packages() {
     [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] && zsh_hl_installed=true
 
     if ! $zsh_hl_installed; then
-        $PKG_INSTALL zsh-syntax-highlighting
-        ok "zsh-syntax-highlighting instalado"
+        install_pkg "zsh-syntax-highlighting" zsh-syntax-highlighting || true
     else
         ok "zsh-syntax-highlighting já instalado"
     fi
