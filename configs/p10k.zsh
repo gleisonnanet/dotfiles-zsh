@@ -393,6 +393,7 @@
       [[ -z $ext || -n ${seen[$ext]} ]] && continue
       seen[$ext]=1
       case $ext in
+        # Code
         py)            icons+=($'\uE73C') ;;
         js|mjs|cjs)    icons+=($'\uE781') ;;
         ts|tsx)        icons+=($'\uE628') ;;
@@ -418,6 +419,29 @@
         lua)           icons+=($'\uE620') ;;
         dart)          icons+=($'\uE798') ;;
         r)             icons+=($'\uF25D') ;;
+        # Documents
+        pdf)                        icons+=($'\uF1C1') ;;
+        doc|docx)                   icons+=($'\uF1C2') ;;
+        xls|xlsx)                   icons+=($'\uF1C3') ;;
+        ppt|pptx)                   icons+=($'\uF1C4') ;;
+        odt|ods|odp)                icons+=($'\uF1C2') ;;
+        csv)                        icons+=($'\uF1C0') ;;
+        # Images
+        png|jpg|jpeg|gif|bmp|webp)  icons+=($'\uF1C5') ;;
+        ico)                        icons+=($'\uF1C5') ;;
+        psd|ai|sketch)              icons+=($'\uE7B8') ;;
+        # Audio
+        mp3|wav|flac|ogg|aac|wma|m4a) icons+=($'\uF001') ;;
+        # Video
+        mp4|mkv|avi|mov|wmv|flv|webm) icons+=($'\uF008') ;;
+        # Archives
+        zip|tar|gz|bz2|xz|7z|rar|zst) icons+=($'\uF1C6') ;;
+        # Disk images / ISO
+        iso|img)                    icons+=($'\uE271') ;;
+        # Fonts
+        ttf|otf|woff|woff2)        icons+=($'\uF031') ;;
+        # Binary / Executable
+        bin|exe|AppImage|deb|rpm)   icons+=($'\uF487') ;;
       esac
     done
     # Special files without extension
